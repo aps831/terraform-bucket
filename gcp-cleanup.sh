@@ -53,4 +53,3 @@ if [ "${gcpproject}" == "" ]; then
 fi
 
 delete_project_and_bucket "${project}" "${gcpproject}"
-

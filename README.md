@@ -23,6 +23,7 @@ To cleanup an AWS bucket use:
 ```bash
 curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/v1/aws-cleanup.sh | bash -s -- --account ${account} --project ${project} --profile ${profile} --region ${region}
 ```
+
 where
 
 ```text

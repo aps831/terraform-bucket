@@ -57,12 +57,12 @@ function delete_buckets() {
 
   # S3 Bucket State
   versions_state="$(aws s3api list-object-versions --bucket "${bucket_name_state}" --output=json --query='{Objects: Versions[].{Key: Key, VersionId: VersionId}}')"
-  aws s3api delete-objects --bucket "${bucket_name_state}" --delete "${versions_state}" > /dev/null 2>&1 || true
+  aws s3api delete-objects --bucket "${bucket_name_state}" --delete "${versions_state}" >/dev/null 2>&1 || true
   aws s3api delete-bucket --bucket "${bucket_name_state}"
 
   # S3 Bucket Logging
   versions_logging="$(aws s3api list-object-versions --bucket "${bucket_name_logging}" --output=json --query='{Objects: Versions[].{Key: Key, VersionId: VersionId}}')"
-  aws s3api delete-objects --bucket "${bucket_name_logging}" --delete "${versions_logging}" > /dev/null 2>&1 || true
+  aws s3api delete-objects --bucket "${bucket_name_logging}" --delete "${versions_logging}" >/dev/null 2>&1 || true
   aws s3api delete-bucket --bucket "${bucket_name_logging}"
 
   # DyanamoDB State Lock

@@ -37,7 +37,7 @@ function wait_for_dynamobd_table_to_be_created() {
 
 function lifecycle_rule_state() {
   filename=$(mktemp)
-  cat << EOF > "$filename"
+  cat <<EOF >"$filename"
 {
     "Rules": [
         {
@@ -56,7 +56,7 @@ EOF
 
 function lifecycle_rule_logging() {
   filename=$(mktemp)
-  cat << EOF > "$filename"
+  cat <<EOF >"$filename"
 {
     "Rules": [
         {
@@ -81,7 +81,7 @@ function bucket_logging() {
   bucket_name_state=$(bucket_name_state "${account}" "${project}")
 
   filename=$(mktemp)
-  cat << EOF > "$filename"
+  cat <<EOF >"$filename"
 {
   "LoggingEnabled": {
     "TargetBucket": "${bucket_name_logging}",

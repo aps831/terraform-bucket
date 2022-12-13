@@ -31,7 +31,7 @@ EOF
 
 function life_cycle_policy() {
   filename=$(mktemp)
-  cat << EOF > "$filename"
+  cat <<EOF >"$filename"
 {
   "lifecycle": {
     "rule": [
