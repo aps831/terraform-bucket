@@ -58,6 +58,6 @@ curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/v1/gcp-cleanup
 where
 
 ```text
-project    = project name (eg git repo)
+project    = project name (eg git repo plus random word)
 gcpproject = GCP project name
 ```
