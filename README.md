@@ -1,0 +1,63 @@
+# Terraform Bucket
+
+This repository provides scripts for bootstrapping buckets (and in the case of GCP and project) to store Terraform state.
+
+To initialise an AWS bucket use:
+
+```bash
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/master/aws-init.sh | bash -s -- --account ${account} --project ${project} --profile ${profile} --region ${region} --tag ${tag}
+```
+
+where
+
+```text
+account = AWS account number
+project = project name (eg git repo)
+profile = AWS profile
+region  = AWS region (eg eu-west-2)
+tag     = tag to add to AWS resources
+```
+
+To cleanup an AWS bucket use:
+
+```bash
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/master/aws-cleanup.sh | bash -s -- --account ${account} --project ${project} --profile ${profile} --region ${region}
+```
+where
+
+```text
+account = AWS account number
+project = project name (eg git repo)
+profile = AWS profile
+region  = AWS region (eg eu-west-2)
+```
+
+To initialise a GCP project and bucket use:
+
+```bash
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/master/gcp-init.sh | bash -s -- --account ${account} --project ${project} --gcpproject ${gcpproject} --region ${region}
+```
+
+where
+
+```text
+account    = GCP account email address
+project    = project name (eg git repo plus random word)
+gcpproject = GCP project name
+region     = GCP region (eg europe-west2)
+```
+
+Note that `gcpproject` and the terraform bucket with name `${project}-terraform-state` must be globally unique.
+
+To cleanup a GCP project and bucket use:
+
+```bash
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/master/gcp-cleanup.sh | bash -s -- --project ${project} --gcpproject ${gcpproject}
+```
+
+where
+
+```text
+project    = project name (eg git repo)
+gcpproject = GCP project name
+```
