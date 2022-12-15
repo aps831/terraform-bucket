@@ -30,4 +30,4 @@ jobs:
         run: terraform init -backend=false
 
       - name: Trunk Check
-        uses: trunk-io/trunk-action@v1.0.4
+        uses: trunk-io/trunk-action@v1.0.5
