@@ -1,0 +1,8 @@
+name: Terraform docs
+on:
+  push:
+    branches:
+      - "master"
+jobs:
+  build:
+    uses: aps831/workflows/.github/workflows/terraform-docs.yaml@master

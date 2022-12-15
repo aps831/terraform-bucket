@@ -1,0 +1,33 @@
+name: Trunk Check
+on:
+  pull_request: {}
+env:
+  TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
+  TERRAFORM_VERSION: 1.1.2
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: (github.actor != 'dependabot[bot]')
+    steps:
+      - uses: actions/checkout@v3.1.0
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v2.0.2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+
+      - name: Create Terraform Plugin Cache Dir
+        run: mkdir --parents $TF_PLUGIN_CACHE_DIR
+
+      - name: Cache Terraform
+        uses: actions/cache@v3.0.11
+        with:
+          path: ${{ env.TF_PLUGIN_CACHE_DIR }}
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
+
+      - name: Terraform download dependencies
+        run: terraform init -backend=false
+
+      - name: Trunk Check
+        uses: trunk-io/trunk-action@v1.0.4

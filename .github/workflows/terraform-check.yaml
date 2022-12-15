@@ -1,0 +1,8 @@
+name: Terraform check
+on:
+  - pull_request
+jobs:
+  build:
+    uses: aps831/workflows/.github/workflows/terraform-check.yaml@master
+    with:
+      terraform-version: 1.1.2
