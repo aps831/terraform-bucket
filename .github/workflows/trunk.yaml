@@ -21,7 +21,7 @@ jobs:
         run: mkdir --parents $TF_PLUGIN_CACHE_DIR
 
       - name: Cache Terraform
-        uses: actions/cache@v3.0.11
+        uses: actions/cache@v3.2.2
         with:
           path: ${{ env.TF_PLUGIN_CACHE_DIR }}
           key: ${{ runner.os }}-terraform-${{ hashFiles('**/.terraform.lock.hcl') }}
