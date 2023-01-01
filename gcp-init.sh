@@ -71,13 +71,21 @@ function create_project_and_bucket() {
   gcloud beta billing projects link "${gcpproject}" --billing-account "${billing_account}"
 
   # Enable API's
+  gcloud services enable iam.googleapis.com --project "${gcpproject}"
   gcloud services enable billingbudgets.googleapis.com --project "${gcpproject}"
   gcloud services enable cloudbilling.googleapis.com --project "${gcpproject}"
   gcloud services enable cloudresourcemanager.googleapis.com --project "${gcpproject}"
 
-  # Add roles
-  gcloud projects add-iam-policy-binding "${gcpproject}" --member user:"${account}" --role roles/storage.admin
-  gcloud projects add-iam-policy-binding "${gcpproject}" --member user:"${account}" --role roles/serviceusage.serviceUsageConsumer
+  # Add Terraform admin role
+  permissions="serviceusage.services.use"
+  permissions="${permissions},resourcemanager.projects.get"
+  permissions="${permissions},storage.objects.create"
+  permissions="${permissions},storage.objects.delete"
+  permissions="${permissions},storage.objects.get"
+  permissions="${permissions},storage.objects.getIamPolicy"
+  permissions="${permissions},storage.objects.list"
+  gcloud iam roles create "terraform.admin" --title "Terraform Admin" --project "${gcpproject}" --permissions "${permissions}" --stage="GA"
+  gcloud projects add-iam-policy-binding "${gcpproject}" --member="user:${account}" --role=projects/"${gcpproject}"/roles/terraform.admin
 
   # Bucket
   gsutil mb -p "${gcpproject}" -l "${region}" gs://"${bucket_name}"
