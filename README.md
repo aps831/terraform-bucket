@@ -18,6 +18,8 @@ region  = AWS region (eg eu-west-2)
 tag     = tag to add to AWS resources
 ```
 
+Note that the S3 bucket with name `${account}-${project}-terraform-state` must be globally unique.
+
 To cleanup an AWS bucket use:
 
 ```bash
