@@ -48,7 +48,7 @@ gcpproject = GCP project name
 region     = GCP region (eg europe-west2)
 ```
 
-Note that `gcpproject` and the terraform bucket with name `${project}-terraform-state` must be globally unique.
+Note that `gcpproject` and the storage bucket with name `${project}-terraform-state` must be globally unique.
 
 To cleanup a GCP project and bucket use:
 
