@@ -1,6 +1,6 @@
 # Terraform Bucket
 
-This repository provides scripts for bootstrapping buckets (and in the case of GCP and project) to store Terraform state.
+This repository provides scripts for bootstrapping buckets (and in the case of GCP, a project) to store Terraform state.
 
 To initialise an AWS bucket use:
 
