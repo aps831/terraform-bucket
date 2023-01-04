@@ -1,0 +1,28 @@
+name: Update Readme
+on:
+  push:
+    branches:
+      - "master"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: (github.actor != 'dependabot[bot]')
+    steps:
+      - uses: actions/checkout@v3.2.0
+        with:
+          fetch-depth: 0
+
+      - name: Update README
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "master")
+          export TAG
+          echo "Using tag ${TAG}"
+          envsubst '$TAG' < README.tpl.md > README.md
+
+      - name: Commit README
+        run: |
+          git config --global user.name ${{ github.actor }}
+          git config --global user.email ${{ github.actor }}@users.noreply.github.com
+          git add README.md
+          git commit -m 'docs: update README [skip ci]' || echo "No changes to commit"
+          git push || echo "No changes to push"
