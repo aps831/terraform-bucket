@@ -7,8 +7,7 @@ updates:
     assignees:
       - "aps831"
     labels:
-      - "enhancement"
-
+      - "github_actions"
   - package-ecosystem: "terraform"
     directory: "/"
     schedule:
@@ -16,4 +15,4 @@ updates:
     assignees:
       - "aps831"
     labels:
-      - "enhancement"
+      - "dependencies"
