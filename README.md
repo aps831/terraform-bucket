@@ -5,7 +5,7 @@ This repository provides scripts for bootstrapping buckets (and in the case of G
 To initialise an AWS bucket use:
 
 ```bash
-curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/2.0.0/aws-init.sh | bash -s -- --account ${account} --project ${project} --profile ${profile} --region ${region} --tag ${tag}
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/3.0.0/aws-init.sh | bash -s -- --account ${account} --project ${project} --profile ${profile} --region ${region} --tag ${tag}
 ```
 
 where
@@ -23,7 +23,7 @@ Note that the S3 bucket with name `${account}-${project}-terraform-state` must b
 To cleanup an AWS bucket use:
 
 ```bash
-curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/2.0.0/aws-cleanup.sh | bash -s -- --account ${account} --project ${project} --profile ${profile} --region ${region}
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/3.0.0/aws-cleanup.sh | bash -s -- --account ${account} --project ${project} --profile ${profile} --region ${region}
 ```
 
 where
@@ -38,29 +38,27 @@ region  = AWS region (eg eu-west-2)
 To initialise a GCP project and bucket use:
 
 ```bash
-curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/2.0.0/gcp-init.sh | bash -s -- --account ${account} --project ${project} --gcpproject ${gcpproject} --region ${region}
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/3.0.0/gcp-init.sh | bash -s -- --account ${account} --gcpproject ${gcpproject} --region ${region}
 ```
 
 where
 
 ```text
 account    = GCP account email address
-project    = project name (eg git repo plus random word)
 gcpproject = GCP project name
 region     = GCP region (eg europe-west2)
 ```
 
-Note that `gcpproject` and the storage bucket with name `${project}-terraform-state` must be globally unique.
+Note that `gcpproject` and the storage bucket with name `${gcpproject}-terraform-state` must be globally unique.
 
 To cleanup a GCP project and bucket use:
 
 ```bash
-curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/2.0.0/gcp-cleanup.sh | bash -s -- --project ${project} --gcpproject ${gcpproject}
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/3.0.0/gcp-cleanup.sh | bash -s -- --gcpproject ${gcpproject}
 ```
 
 where
 
 ```text
-project    = project name (eg git repo plus random word)
 gcpproject = GCP project name
 ```
