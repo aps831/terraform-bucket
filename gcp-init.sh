@@ -22,7 +22,6 @@ Create GCP project and terraform state bucket
 Options:
 --help          display this usage message and exit
 --account       GCP account email
---project       Project name
 --gcpproject    GCP project name
 --region        GCP region
 EOF
@@ -50,18 +49,17 @@ EOF
 }
 
 function bucket_name() {
-  local project=$1
-  echo "${project}-terraform-state"
+  local gcpproject=$1
+  echo "${gcpproject}-terraform-state"
 }
 
 function create_project_and_bucket() {
 
   local account=$1
-  local project=$2
-  local gcpproject=$3
-  local region=$4
+  local gcpproject=$2
+  local region=$3
 
-  bucket_name="$(bucket_name "${project}")"
+  bucket_name="$(bucket_name "${gcpproject}")"
 
   # Project
   gcloud projects create "${gcpproject}" --enable-cloud-apis
@@ -108,7 +106,6 @@ function create_project_and_bucket() {
 ##
 
 account=""
-project=""
 gcpproject=""
 region=""
 while [[ $# -gt 0 ]]; do
@@ -118,10 +115,6 @@ while [[ $# -gt 0 ]]; do
     ;;
   --account)
     account="$2"
-    shift
-    ;;
-  --project)
-    project="$2"
     shift
     ;;
   --gcpproject)
@@ -143,10 +136,6 @@ if [ "${account}" == "" ]; then
   usage "Account email must be provided"
 fi
 
-if [ "${project}" == "" ]; then
-  usage "Project name must be provided"
-fi
-
 if [ "${gcpproject}" == "" ]; then
   usage "GCP project name must be provided"
 fi
@@ -155,4 +144,4 @@ if [ "${region}" == "" ]; then
   usage "Region must be provided"
 fi
 
-create_project_and_bucket "${account}" "${project}" "${gcpproject}" "${region}"
+create_project_and_bucket "${account}" "${gcpproject}" "${region}"
