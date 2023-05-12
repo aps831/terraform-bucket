@@ -8,7 +8,6 @@ jobs:
   publish:
     permissions:
       contents: write
-      packages: write
     uses: aps831/workflows/.github/workflows/release.yaml@master
     secrets:
       ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
