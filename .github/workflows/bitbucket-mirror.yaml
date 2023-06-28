@@ -12,3 +12,7 @@ jobs:
       repositoryname: terraform-bucket
     secrets:
       BITBUCKET_SSH_PRIVATE_KEY: ${{ secrets.BITBUCKET_SSH_PRIVATE_KEY }}
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
