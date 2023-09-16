@@ -92,6 +92,44 @@ EOF
   echo "$filename"
 }
 
+function bucket_policy_logging() {
+  local prefix=$1
+  local project=$2
+
+  bucket_name_logging=$(bucket_name_logging "${prefix}" "${project}")
+  bucket_name_state=$(bucket_name_state "${prefix}" "${project}")
+  account=$(aws sts get-caller-identity | jq -r '.Account')
+
+  filename=$(mktemp)
+  cat <<EOF >"$filename"
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "S3ServerAccessLogsPolicy",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "logging.s3.amazonaws.com"
+      },
+      "Action": [
+        "s3:PutObject"
+      ],
+      "Resource": "arn:aws:s3:::${bucket_name_logging}/*",
+      "Condition": {
+        "ArnLike": {
+          "aws:SourceArn": "arn:aws:s3:::${bucket_name_state}"
+        },
+        "StringEquals": {
+          "aws:SourceAccount": "${account}"
+        }
+      }
+    }
+  ]
+}
+EOF
+  echo "$filename"
+}
+
 function bucket_name_state() {
   local prefix=$1
   local project=$2
@@ -127,7 +165,7 @@ function create_buckets() {
   aws s3api put-bucket-encryption --bucket "${bucket_name_logging}" --server-side-encryption-configuration '{"Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]}'
   aws s3api put-bucket-tagging --bucket "${bucket_name_logging}" --tagging "TagSet=[{Key=service,Value=$tag}]"
   aws s3api put-bucket-lifecycle-configuration --bucket "${bucket_name_logging}" --lifecycle-configuration file://"$(lifecycle_rule_logging)"
-  aws s3api put-bucket-acl --bucket "${bucket_name_logging}" --grant-write URI=http://acs.amazonaws.com/groups/s3/LogDelivery --grant-read-acp URI=http://acs.amazonaws.com/groups/s3/LogDelivery
+  aws s3api put-bucket-policy --bucket "${bucket_name_logging}" --policy file://"$(bucket_policy_logging "${prefix}" "${project}")"
 
   # S3 Bucket State
   aws s3api create-bucket --bucket "${bucket_name_state}" --create-bucket-configuration LocationConstraint="${region}"
