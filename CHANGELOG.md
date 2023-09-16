@@ -1,4 +1,11 @@
-## [](https://github.com/aps831/terraform-bucket/compare/v4.0.0...v) (2023-09-16)
+## [](https://github.com/aps831/terraform-bucket/compare/v4.0.1...v) (2023-09-16)
+
+### [4.0.1](https://github.com/aps831/terraform-bucket/compare/v4.0.0...v4.0.1) (2023-09-16)
+
+
+### Bug Fixes
+
+* replace bucket acl with bucket policy on logging bucket ([a2510cb](https://github.com/aps831/terraform-bucket/commit/a2510cba2d20fbe394bd96b2308a8ddb0b2a4be8))
 
 ## [4.0.0](https://github.com/aps831/terraform-bucket/compare/v3.0.0...v4.0.0) (2023-09-16)
 
