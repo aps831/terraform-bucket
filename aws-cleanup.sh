@@ -21,7 +21,7 @@ Delete AWS terraform state and logging bucket
 
 Options:
 --help          display this usage message and exit
---account       AWS account number
+--prefix        Prefix for uniqueness constraint
 --project       Project name
 --profile       AWS profile
 --region        AWS region
@@ -30,30 +30,31 @@ EOF
 }
 
 function bucket_name_state() {
-  local account=$1
+  local prefix=$1
   local project=$2
-  echo "${account}-${project}-terraform-state"
+  echo "${prefix}-${project}-terraform-state"
 }
 
 function bucket_name_logging() {
-  local account=$1
+  local prefix=$1
   local project=$2
-  echo "${account}-${project}-terraform-logging"
+  echo "${prefix}-${project}-terraform-logging"
 }
 
 function dynamo_db_state() {
-  local project=$1
-  echo "${project}-terraform-state-locks"
+  local prefix=$1
+  local project=$2
+  echo "${prefix}-${project}-terraform-state-locks"
 }
 
 function delete_buckets() {
-  local account=$1
+  local prefix=$1
   local project=$2
   local region=$3
 
-  bucket_name_logging="$(bucket_name_logging "${account}" "${project}")"
-  bucket_name_state="$(bucket_name_state "${account}" "${project}")"
-  dynamo_db_state="$(dynamo_db_state "${project}")"
+  bucket_name_logging="$(bucket_name_logging "${prefix}" "${project}")"
+  bucket_name_state="$(bucket_name_state "${prefix}" "${project}")"
+  dynamo_db_state="$(dynamo_db_state "${prefix}" "${project}")"
 
   # S3 Bucket State
   versions_state="$(aws s3api list-object-versions --bucket "${bucket_name_state}" --output=json --query='{Objects: Versions[].{Key: Key, VersionId: VersionId}}')"
@@ -74,7 +75,7 @@ function delete_buckets() {
 ## Script
 ##
 
-account=""
+prefix=""
 project=""
 profile=""
 region=""
@@ -83,8 +84,8 @@ while [[ $# -gt 0 ]]; do
   --help)
     usage
     ;;
-  --account)
-    account="$2"
+  --prefix)
+    prefix="$2"
     shift
     ;;
   --project)
@@ -106,8 +107,8 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-if [ "${account}" == "" ]; then
-  usage "Account number must be provided"
+if [[ ${prefix} == "" ]]; then
+  usage "Prefix must be provided"
 fi
 
 if [ "${project}" == "" ]; then
@@ -125,4 +126,4 @@ fi
 export AWS_PAGER=""
 export AWS_PROFILE="${profile}"
 
-delete_buckets "${account}" "${project}" "${region}"
+delete_buckets "${prefix}" "${project}" "${region}"

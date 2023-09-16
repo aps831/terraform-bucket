@@ -21,7 +21,7 @@ Create AWS terraform state and logging bucket
 
 Options:
 --help          display this usage message and exit
---account       AWS account number
+--prefix        Prefix for uniqueness constraint
 --project       Project name
 --profile       AWS profile
 --region        AWS region
@@ -74,11 +74,11 @@ EOF
 }
 
 function bucket_logging() {
-  local account=$1
+  local prefix=$1
   local project=$2
 
-  bucket_name_logging=$(bucket_name_logging "${account}" "${project}")
-  bucket_name_state=$(bucket_name_state "${account}" "${project}")
+  bucket_name_logging=$(bucket_name_logging "${prefix}" "${project}")
+  bucket_name_state=$(bucket_name_state "${prefix}" "${project}")
 
   filename=$(mktemp)
   cat <<EOF >"$filename"
@@ -93,31 +93,32 @@ EOF
 }
 
 function bucket_name_state() {
-  local account=$1
+  local prefix=$1
   local project=$2
-  echo "${account}-${project}-terraform-state"
+  echo "${prefix}-${project}-terraform-state"
 }
 
 function bucket_name_logging() {
-  local account=$1
+  local prefix=$1
   local project=$2
-  echo "${account}-${project}-terraform-logging"
+  echo "${prefix}-${project}-terraform-logging"
 }
 
 function dynamo_db_state() {
-  local project=$1
-  echo "${project}-terraform-state-locks"
+  local prefix=$1
+  local project=$2
+  echo "${prefix}-${project}-terraform-state-locks"
 }
 
 function create_buckets() {
-  local account=$1
+  local prefix=$1
   local project=$2
   local region=$3
   local tag=$4
 
-  bucket_name_logging="$(bucket_name_logging "${account}" "${project}")"
-  bucket_name_state="$(bucket_name_state "${account}" "${project}")"
-  dynamo_db_state="$(dynamo_db_state "${project}")"
+  bucket_name_logging="$(bucket_name_logging "${prefix}" "${project}")"
+  bucket_name_state="$(bucket_name_state "${prefix}" "${project}")"
+  dynamo_db_state="$(dynamo_db_state "${prefix}" "${project}")"
 
   # S3 Bucket Logging
   aws s3api create-bucket --bucket "${bucket_name_logging}" --create-bucket-configuration LocationConstraint="${region}"
@@ -135,7 +136,7 @@ function create_buckets() {
   aws s3api put-bucket-encryption --bucket "${bucket_name_state}" --server-side-encryption-configuration '{"Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]}'
   aws s3api put-bucket-tagging --bucket "${bucket_name_state}" --tagging "TagSet=[{Key=service,Value=$tag}]"
   aws s3api put-bucket-lifecycle-configuration --bucket "${bucket_name_state}" --lifecycle-configuration file://"$(lifecycle_rule_state)"
-  aws s3api put-bucket-logging --bucket "${bucket_name_state}" --bucket-logging-status file://"$(bucket_logging "${account}" "${project}")"
+  aws s3api put-bucket-logging --bucket "${bucket_name_state}" --bucket-logging-status file://"$(bucket_logging "${prefix}" "${project}")"
 
   # DyanamoDB State Lock
   dynamodb0=$(aws dynamodb create-table --table-name "${dynamo_db_state}" --attribute-definitions AttributeName=LockID,AttributeType=S --billing-mode "PAY_PER_REQUEST" --key-schema AttributeName=LockID,KeyType=HASH)
@@ -148,7 +149,7 @@ function create_buckets() {
 ## Script
 ##
 
-account=""
+prefix=""
 project=""
 profile=""
 region=""
@@ -158,8 +159,8 @@ while [[ $# -gt 0 ]]; do
   --help)
     usage
     ;;
-  --account)
-    account="$2"
+  --prefix)
+    prefix="$2"
     shift
     ;;
   --project)
@@ -185,8 +186,8 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-if [ "${account}" == "" ]; then
-  usage "Account number must be provided"
+if [[ ${prefix} == "" ]]; then
+  usage "Prefix must be provided"
 fi
 
 if [ "${project}" == "" ]; then
@@ -208,4 +209,4 @@ fi
 export AWS_PAGER=""
 export AWS_PROFILE="${profile}"
 
-create_buckets "${account}" "${project}" "${region}" "${tag}"
+create_buckets "${prefix}" "${project}" "${region}" "${tag}"

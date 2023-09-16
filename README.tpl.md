@@ -5,31 +5,31 @@ This repository provides scripts for bootstrapping buckets (and in the case of G
 To initialise an AWS bucket use:
 
 ```bash
-curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/${TAG}/aws-init.sh | bash -s -- --account ${account} --project ${project} --profile ${profile} --region ${region} --tag ${tag}
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/${TAG}/aws-init.sh | bash -s -- --prefix ${prefix} --project ${project} --profile ${profile} --region ${region} --tag ${tag}
 ```
 
 where
 
 ```text
-account = AWS account number
+prefix  = prefix for uniqueness constraint
 project = project name (eg git repo)
 profile = AWS profile
 region  = AWS region (eg eu-west-2)
 tag     = tag to add to AWS resources
 ```
 
-Note that the S3 bucket with name `${account}-${project}-terraform-state` must be globally unique.
+Note that the S3 bucket with name `${prefix}-${project}-terraform-state` must be globally unique.
 
 To cleanup an AWS bucket use:
 
 ```bash
-curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/${TAG}/aws-cleanup.sh | bash -s -- --account ${account} --project ${project} --profile ${profile} --region ${region}
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/${TAG}/aws-cleanup.sh | bash -s -- --prefix ${prefix} --project ${project} --profile ${profile} --region ${region}
 ```
 
 where
 
 ```text
-account = AWS account number
+prefix  = prefix for uniqueness constraint
 project = project name (eg git repo)
 profile = AWS profile
 region  = AWS region (eg eu-west-2)
