@@ -1,4 +1,15 @@
-## [](https://github.com/aps831/terraform-bucket/compare/v3.0.0...v) (2023-05-09)
+## [](https://github.com/aps831/terraform-bucket/compare/v4.0.0...v) (2023-09-16)
+
+## [4.0.0](https://github.com/aps831/terraform-bucket/compare/v3.0.0...v4.0.0) (2023-09-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* The account flag has been replaced with a prefix flag
+
+### Features
+
+* use prefix for uniqueness on aws s3 buckets ([d2d8d0f](https://github.com/aps831/terraform-bucket/commit/d2d8d0f77d9aec5b06c86b12d2f2961059e9c9f1))
 
 ## [3.0.0](https://github.com/aps831/terraform-bucket/compare/v2.0.0...v3.0.0) (2023-05-09)
 
