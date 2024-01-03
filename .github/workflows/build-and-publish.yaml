@@ -1,0 +1,19 @@
+---
+name: Build and Publish Repository
+on:
+  push:
+    branches:
+      - "master"
+      - "prerelease"
+  pull_request: {}
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+jobs:
+  build:
+    uses: aps831/workflows/.github/workflows/build-and-publish-basic.yaml@master
+    with:
+      templated-files: README.tpl.md
+    secrets:
+      ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
