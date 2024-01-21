@@ -1,3 +1,4 @@
+---
 version: 2
 updates:
   - package-ecosystem: "github-actions"
@@ -9,12 +10,10 @@ updates:
     labels:
       - "github_actions"
       - "no_ci_cd_run"
-  - package-ecosystem: "terraform"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    assignees:
-      - "aps831"
-    labels:
-      - "dependencies"
-      - "no_ci_cd_run"
+    commit-message:
+      prefix: "chore"
+    groups:
+      patch-minor-dependencies:
+        update-types:
+          - "minor"
+          - "patch"
