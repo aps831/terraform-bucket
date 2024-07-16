@@ -80,10 +80,16 @@ function create_project_and_bucket() {
   gcloud services enable cloudbilling.googleapis.com --project "${gcpproject}"
   gcloud services enable cloudresourcemanager.googleapis.com --project "${gcpproject}"
 
-  # Add Terraform service account
-  gcloud iam service-accounts create terraform --project "${gcpproject}" --description "Terraform Service Account" --display-name "Terraform Service Account"
-  gcloud iam service-accounts add-iam-policy-binding "terraform@${gcpproject}.iam.gserviceaccount.com" --project "${gcpproject}" --member="user:${account}" --role="roles/iam.serviceAccountTokenCreator"
-  gcloud projects add-iam-policy-binding "${gcpproject}" --member="serviceAccount:terraform@${gcpproject}.iam.gserviceaccount.com" --role="roles/editor"
+  # Add Terraform write role
+  permissions="serviceusage.services.use"
+  permissions="${permissions},resourcemanager.projects.get"
+  permissions="${permissions},storage.objects.create"
+  permissions="${permissions},storage.objects.delete"
+  permissions="${permissions},storage.objects.get"
+  permissions="${permissions},storage.objects.getIamPolicy"
+  permissions="${permissions},storage.objects.list"
+  gcloud iam roles create "terraform.write" --title "Terraform Write" --project "${gcpproject}" --permissions "${permissions}" --stage="GA"
+  gcloud projects add-iam-policy-binding "${gcpproject}" --member="user:${account}" --role=projects/"${gcpproject}"/roles/terraform.write
 
   # Bucket
   gsutil mb -p "${gcpproject}" -l "${region}" gs://"${bucket_name_tf_state}"
