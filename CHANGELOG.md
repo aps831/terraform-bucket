@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.2.0] - 2024-07-16
+
+### Features
+
+- Revert to using terraform wrote role for gcp
+
+### Build
+
+- Upgrade trunk
+
 ## [4.1.0] - 2024-07-16
 
 ### Features
@@ -17,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - Update dependabot commit message [skip ci]
 - Update delete workflow runs permissions [skip ci]
 - Fix permissions on trunk [skip ci]
+- Update for v4.1.0 release [skip ci]
 
 ## [4.0.1] - 2023-09-16
 
