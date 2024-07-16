@@ -1,18 +1,25 @@
 #! /bin/bash
 set -e
 
-function bucket_name() {
+function bucket_name_tf_state() {
   local gcpproject=$1
   echo "${gcpproject}-terraform-state"
 }
 
-function delete_project_and_bucket() {
+function bucket_name_logging() {
+  local gcpproject=$1
+  echo "${gcpproject}-logging"
+}
+
+function delete_project_and_buckets() {
 
   local gcpproject=$1
 
-  bucket_name="$(bucket_name "${gcpproject}")"
+  bucket_name_tf_state="$(bucket_name_tf_state "${gcpproject}")"
+  bucket_name_logging="$(bucket_name_logging "${gcpproject}")"
 
-  gsutil rm -r gs://"${bucket_name}"
+  gsutil rm -r gs://"${bucket_name_tf_state}"
+  gsutil rm -r gs://"${bucket_name_logging}"
   gcloud projects delete "${gcpproject}" --quiet
 
 }
@@ -42,4 +49,4 @@ if [ "${gcpproject}" == "" ]; then
   usage "GCP project name must be provided"
 fi
 
-delete_project_and_bucket "${gcpproject}"
+delete_project_and_buckets "${gcpproject}"

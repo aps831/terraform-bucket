@@ -48,9 +48,14 @@ EOF
   echo "${filename}"
 }
 
-function bucket_name() {
+function bucket_name_tf_state() {
   local gcpproject=$1
   echo "${gcpproject}-terraform-state"
+}
+
+function bucket_name_logging() {
+  local gcpproject=$1
+  echo "${gcpproject}-logging"
 }
 
 function create_project_and_bucket() {
@@ -59,7 +64,8 @@ function create_project_and_bucket() {
   local gcpproject=$2
   local region=$3
 
-  bucket_name="$(bucket_name "${gcpproject}")"
+  bucket_name_tf_state="$(bucket_name_tf_state "${gcpproject}")"
+  bucket_name_logging="$(bucket_name_logging "${gcpproject}")"
 
   # Project
   gcloud projects create "${gcpproject}" --enable-cloud-apis
@@ -74,30 +80,31 @@ function create_project_and_bucket() {
   gcloud services enable cloudbilling.googleapis.com --project "${gcpproject}"
   gcloud services enable cloudresourcemanager.googleapis.com --project "${gcpproject}"
 
-  # Add Terraform admin role
-  permissions="serviceusage.services.use"
-  permissions="${permissions},resourcemanager.projects.get"
-  permissions="${permissions},storage.objects.create"
-  permissions="${permissions},storage.objects.delete"
-  permissions="${permissions},storage.objects.get"
-  permissions="${permissions},storage.objects.getIamPolicy"
-  permissions="${permissions},storage.objects.list"
-  gcloud iam roles create "terraform.admin" --title "Terraform Admin" --project "${gcpproject}" --permissions "${permissions}" --stage="GA"
-  gcloud projects add-iam-policy-binding "${gcpproject}" --member="user:${account}" --role=projects/"${gcpproject}"/roles/terraform.admin
+  # Add Terraform service account
+  gcloud iam service-accounts create terraform --project "${gcpproject}" --description "Terraform Service Account" --display-name "Terraform Service Account"
+  gcloud iam service-accounts add-iam-policy-binding "terraform@${gcpproject}.iam.gserviceaccount.com" --project "${gcpproject}" --member="user:${account}" --role="roles/iam.serviceAccountTokenCreator"
+  gcloud projects add-iam-policy-binding "${gcpproject}" --member="serviceAccount:terraform@${gcpproject}.iam.gserviceaccount.com" --role="roles/editor"
 
   # Bucket
-  gsutil mb -p "${gcpproject}" -l "${region}" gs://"${bucket_name}"
+  gsutil mb -p "${gcpproject}" -l "${region}" gs://"${bucket_name_tf_state}"
+  gsutil mb -p "${gcpproject}" -l "${region}" gs://"${bucket_name_logging}"
 
   # Uniform bucket access
-  gsutil ubla set on gs://"${bucket_name}"
+  gsutil ubla set on gs://"${bucket_name_tf_state}"
+  gsutil ubla set on gs://"${bucket_name_logging}"
 
   # Prevent public access
-  gsutil pap set enforced gs://"${bucket_name}"
+  gsutil pap set enforced gs://"${bucket_name_tf_state}"
+  gsutil pap set enforced gs://"${bucket_name_logging}"
 
   # Versioning
-  gsutil versioning set on gs://"${bucket_name}"
+  gsutil versioning set on gs://"${bucket_name_tf_state}"
+  gsutil versioning set on gs://"${bucket_name_logging}"
 
-  gsutil lifecycle set "$(life_cycle_policy)" gs://"${bucket_name}"
+  gsutil lifecycle set "$(life_cycle_policy)" gs://"${bucket_name_tf_state}"
+  gsutil lifecycle set "$(life_cycle_policy)" gs://"${bucket_name_logging}"
+
+  gsutil logging set on -b gs://"${bucket_name_logging}" -o tfStateLog gs://"${bucket_name_tf_state}"
 
 }
 
