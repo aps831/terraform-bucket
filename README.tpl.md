@@ -38,7 +38,7 @@ region  = AWS region (eg eu-west-2)
 To initialise a GCP project and bucket use:
 
 ```bash
-curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/${TAG}/gcp-init.sh | bash -s -- --account ${account} --gcpproject ${gcpproject} --region ${region}
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/${TAG}/gcp-init.sh | bash -s -- --account ${account} --gcpproject ${gcpproject}
 ```
 
 where
@@ -46,7 +46,6 @@ where
 ```text
 account    = GCP account email address
 gcpproject = GCP project name
-region     = GCP region (eg europe-west2)
 ```
 
 Note that `gcpproject` and the storage bucket with name `${gcpproject}-terraform-state` must be globally unique.

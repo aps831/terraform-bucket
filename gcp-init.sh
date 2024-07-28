@@ -23,7 +23,6 @@ Options:
 --help          display this usage message and exit
 --account       GCP account email
 --gcpproject    GCP project name
---region        GCP region
 EOF
   exit 0
 }
@@ -62,7 +61,6 @@ function create_project_and_bucket() {
 
   local account=$1
   local gcpproject=$2
-  local region=$3
 
   bucket_name_tf_state="$(bucket_name_tf_state "${gcpproject}")"
   bucket_name_logging="$(bucket_name_logging "${gcpproject}")"
@@ -92,25 +90,25 @@ function create_project_and_bucket() {
   gcloud projects add-iam-policy-binding "${gcpproject}" --member="user:${account}" --role=projects/"${gcpproject}"/roles/terraform.write
 
   # Bucket
-  gsutil mb -p "${gcpproject}" -l "${region}" gs://"${bucket_name_tf_state}"
-  gsutil mb -p "${gcpproject}" -l "${region}" gs://"${bucket_name_logging}"
+  gcloud storage buckets create gs://"${bucket_name_tf_state}" --project "${gcpproject}"
+  gcloud storage buckets create gs://"${bucket_name_logging}" --project "${gcpproject}"
 
   # Uniform bucket access
-  gsutil ubla set on gs://"${bucket_name_tf_state}"
-  gsutil ubla set on gs://"${bucket_name_logging}"
+  gcloud storage buckets update gs://"${bucket_name_tf_state}" --uniform-bucket-level-access
+  gcloud storage buckets update gs://"${bucket_name_logging}" --uniform-bucket-level-access
 
   # Prevent public access
-  gsutil pap set enforced gs://"${bucket_name_tf_state}"
-  gsutil pap set enforced gs://"${bucket_name_logging}"
+  gcloud storage buckets update gs://"${bucket_name_tf_state}" --public-access-prevention
+  gcloud storage buckets update gs://"${bucket_name_logging}" --public-access-prevention
 
   # Versioning
-  gsutil versioning set on gs://"${bucket_name_tf_state}"
-  gsutil versioning set on gs://"${bucket_name_logging}"
+  gcloud storage buckets update gs://"${bucket_name_tf_state}" --versioning
+  gcloud storage buckets update gs://"${bucket_name_logging}" --versioning
 
-  gsutil lifecycle set "$(life_cycle_policy)" gs://"${bucket_name_tf_state}"
-  gsutil lifecycle set "$(life_cycle_policy)" gs://"${bucket_name_logging}"
+  gcloud storage buckets update gs://"${bucket_name_tf_state}" --lifecycle-file "$(life_cycle_policy)"
+  gcloud storage buckets update gs://"${bucket_name_logging}" --lifecycle-file "$(life_cycle_policy)"
 
-  gsutil logging set on -b gs://"${bucket_name_logging}" -o tfStateLog gs://"${bucket_name_tf_state}"
+  gcloud storage buckets update gs://"${bucket_name_logging}" --log-bucket gs://"${bucket_name_tf_state}"
 
 }
 
@@ -120,7 +118,6 @@ function create_project_and_bucket() {
 
 account=""
 gcpproject=""
-region=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
   --help)
@@ -132,10 +129,6 @@ while [[ $# -gt 0 ]]; do
     ;;
   --gcpproject)
     gcpproject="$2"
-    shift
-    ;;
-  --region)
-    region="$2"
     shift
     ;;
   *)
@@ -153,8 +146,4 @@ if [ "${gcpproject}" == "" ]; then
   usage "GCP project name must be provided"
 fi
 
-if [ "${region}" == "" ]; then
-  usage "Region must be provided"
-fi
-
-create_project_and_bucket "${account}" "${gcpproject}" "${region}"
+create_project_and_bucket "${account}" "${gcpproject}"

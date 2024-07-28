@@ -18,8 +18,8 @@ function delete_project_and_buckets() {
   bucket_name_tf_state="$(bucket_name_tf_state "${gcpproject}")"
   bucket_name_logging="$(bucket_name_logging "${gcpproject}")"
 
-  gsutil rm -r gs://"${bucket_name_tf_state}"
-  gsutil rm -r gs://"${bucket_name_logging}"
+  gcloud storage buckets delete gs://"${bucket_name_tf_state}"
+  gcloud storage buckets delete gs://"${bucket_name_logging}"
   gcloud projects delete "${gcpproject}" --quiet
 
 }
