@@ -2,11 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.3.0] - 2024-07-28
+
+### Features
+
+- Use gcloud storage vice gsutil
+
+### Build
+
+- Upgrade trunk
+
 ## [4.2.0] - 2024-07-16
 
 ### Features
 
 - Revert to using terraform wrote role for gcp
+
+### Miscellaneous Tasks
+
+- Update for v4.2.0 release [skip ci]
 
 ### Build
 
