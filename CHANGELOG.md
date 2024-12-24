@@ -1,12 +1,28 @@
+<!-- markdownlint-disable MD024 -->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [4.4.0] - 2024-12-24
+
+### Features
+
+- Set location on gcp buckets
+
+### Build
+
+- Upgrade trunk
 
 ## [4.3.0] - 2024-07-28
 
 ### Features
 
 - Use gcloud storage vice gsutil
+
+### Miscellaneous Tasks
+
+- Update for v4.3.0 release [skip ci]
 
 ### Build
 

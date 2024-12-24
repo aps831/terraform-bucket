@@ -5,7 +5,7 @@ This repository provides scripts for bootstrapping buckets (and in the case of G
 To initialise an AWS bucket use:
 
 ```bash
-curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/v4.3.0/aws-init.sh | bash -s -- --prefix ${prefix} --project ${project} --profile ${profile} --region ${region} --tag ${tag}
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/v4.4.0/aws-init.sh | bash -s -- --prefix ${prefix} --project ${project} --profile ${profile} --region ${region} --tag ${tag}
 ```
 
 where
@@ -23,7 +23,7 @@ Note that the S3 bucket with name `${prefix}-${project}-terraform-state` must be
 To cleanup an AWS bucket use:
 
 ```bash
-curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/v4.3.0/aws-cleanup.sh | bash -s -- --prefix ${prefix} --project ${project} --profile ${profile} --region ${region}
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/v4.4.0/aws-cleanup.sh | bash -s -- --prefix ${prefix} --project ${project} --profile ${profile} --region ${region}
 ```
 
 where
@@ -38,7 +38,7 @@ region  = AWS region (eg eu-west-2)
 To initialise a GCP project and bucket use:
 
 ```bash
-curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/v4.3.0/gcp-init.sh | bash -s -- --account ${account} --gcpproject ${gcpproject}
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/v4.4.0/gcp-init.sh | bash -s -- --account ${account} --gcpproject ${gcpproject}
 ```
 
 where
@@ -53,7 +53,7 @@ Note that `gcpproject` and the storage bucket with name `${gcpproject}-terraform
 To cleanup a GCP project and bucket use:
 
 ```bash
-curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/v4.3.0/gcp-cleanup.sh | bash -s -- --gcpproject ${gcpproject}
+curl -L https://raw.githubusercontent.com/aps831/terraform-bucket/v4.4.0/gcp-cleanup.sh | bash -s -- --gcpproject ${gcpproject}
 ```
 
 where
