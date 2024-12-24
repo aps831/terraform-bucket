@@ -23,6 +23,7 @@ Options:
 --help          display this usage message and exit
 --account       GCP account email
 --gcpproject    GCP project name
+--location      GCP location
 EOF
   exit 0
 }
@@ -61,6 +62,7 @@ function create_project_and_bucket() {
 
   local account=$1
   local gcpproject=$2
+  local location=$3
 
   bucket_name_tf_state="$(bucket_name_tf_state "${gcpproject}")"
   bucket_name_logging="$(bucket_name_logging "${gcpproject}")"
@@ -90,8 +92,8 @@ function create_project_and_bucket() {
   gcloud projects add-iam-policy-binding "${gcpproject}" --member="user:${account}" --role=projects/"${gcpproject}"/roles/terraform.write
 
   # Bucket
-  gcloud storage buckets create gs://"${bucket_name_tf_state}" --project "${gcpproject}"
-  gcloud storage buckets create gs://"${bucket_name_logging}" --project "${gcpproject}"
+  gcloud storage buckets create gs://"${bucket_name_tf_state}" --project "${gcpproject}" --location "${location}"
+  gcloud storage buckets create gs://"${bucket_name_logging}" --project "${gcpproject}" --location "${location}"
 
   # Uniform bucket access
   gcloud storage buckets update gs://"${bucket_name_tf_state}" --uniform-bucket-level-access
@@ -118,6 +120,7 @@ function create_project_and_bucket() {
 
 account=""
 gcpproject=""
+location=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
   --help)
@@ -129,6 +132,10 @@ while [[ $# -gt 0 ]]; do
     ;;
   --gcpproject)
     gcpproject="$2"
+    shift
+    ;;
+  --location)
+    location="$2"
     shift
     ;;
   *)
@@ -146,4 +153,8 @@ if [ "${gcpproject}" == "" ]; then
   usage "GCP project name must be provided"
 fi
 
-create_project_and_bucket "${account}" "${gcpproject}"
+if [ "${location}" == "" ]; then
+  usage "GCP location must be provided"
+fi
+
+create_project_and_bucket "${account}" "${gcpproject}" "${location}"
